@@ -22,15 +22,19 @@ const generatePolicy = (principalId, methodArn) => {
 };
 
 export async function handler(event, context) {
-  if (!event.authorizationToken) {
+  const tokenHeader = event.headers.authorization || event.headers.Authorization;
+
+  if (!tokenHeader) {
+    console.log('event: ', event);
+    console.log('Authorization header not found');
     throw 'Unauthorized';
   }
 
-  const token = event.authorizationToken.replace('Bearer ', '');
+  const token = tokenHeader.replace('Bearer ', '');
 
   try {
     const claims = jwt.verify(token, process.env.AUTH0_PUBLIC_KEY);
-    const policy = generatePolicy(claims.sub, event.methodArn);
+    const policy = generatePolicy(claims.sub, event.routeArn);
 
     return {
       ...policy,

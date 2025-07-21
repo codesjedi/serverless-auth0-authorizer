@@ -1,21 +1,17 @@
+service: serverless-auth0-authorizer
 
-service:
-  name: serverless-auth0-authorizer
-
-plugins:
-  - serverless-bundle
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs20.x
   memorySize: 128
+  region: us-east-1
   environment:
     AUTH0_PUBLIC_KEY: ${file(secret.pem)}
 
 functions:
   auth:
     handler: src/handlers/auth.handler
-    cors: true
   publicEndpoint:
     handler: src/handlers/public.handler
     events:
@@ -29,8 +25,8 @@ functions:
       - http:
           path: private
           method: POST
-          authorizer: auth
           cors: true
+          authorizer: auth
 
 resources:
   Resources:
@@ -55,6 +51,4 @@ resources:
         RestApiId:
           Ref: 'ApiGatewayRestApi'
         StatusCode: '401'
-custom:
-  bundle:
-    linting: false
+
