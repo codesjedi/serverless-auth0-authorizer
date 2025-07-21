@@ -25,8 +25,6 @@ export async function handler(event, context) {
   const tokenHeader = event.headers.authorization || event.headers.Authorization;
 
   if (!tokenHeader) {
-    console.log('event: ', event);
-    console.log('Authorization header not found');
     throw 'Unauthorized';
   }
 
